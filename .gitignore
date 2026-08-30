@@ -1,0 +1,8 @@
+# Agent configuration is reviewed code — only these are local
+.claude/settings.local.json
+.claude/worktrees/
+
+.DS_Store
+*.sdlc-ai-new
+.check-fixture/
+.check-fixture-hooks/

@@ -1,0 +1,46 @@
+AI-Native SDLC Kit
+Copyright 2026 Mohamed Jawad Askar
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+--------------------------------------------------------------------------------
+
+ATTRIBUTION
+
+This project is an independent implementation of the ideas described in
+"The AI-Native SDLC Playbook", published by Anthropic:
+
+    https://claude.com/blog/the-ai-native-sdlc-playbook
+
+The stage model, the artifact chain (intent.md, spec.md, plan.md), the
+distinction between advisory and deterministic controls, the tiered control-band
+response, and several illustrative file formats are drawn from that article.
+Some short configuration examples closely follow the ones published there.
+
+NOT AFFILIATED WITH ANTHROPIC
+
+This project is not affiliated with, endorsed by, sponsored by, or supported by
+Anthropic PBC. No warranty or support is offered or implied by Anthropic.
+
+"Anthropic" and "Claude" are trademarks of Anthropic PBC. They are used here
+only to identify the tools this kit configures and the article it implements,
+which is nominative use; no claim to those marks is made or implied.
+
+EXEMPLAR CONTENT
+
+Some files ship deliberately as worked examples carrying placeholder rules --
+notably kit/claude/skills/secure-api-review/SKILL.md and kit/evals/cases/. They
+demonstrate a shape and must be replaced with your own policy before you rely on
+them. Each such file says so at the top.
+
+The organisations, people, systems and incidents in examples/ are fictional.

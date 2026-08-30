@@ -1,0 +1,52 @@
+# Stage 4b — regression-test the agent configuration.
+#
+# CLAUDE.md, skills and hooks are inputs to a model: change them and behaviour changes. So they get
+# tested like code, on every change to them, and nightly to catch model-side drift.
+name: agent evals
+
+on:
+  pull_request:
+    paths:
+      - 'CLAUDE.md'
+      - '.claude/**'
+      - 'evals/**'
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0        # run.sh creates worktrees; it needs real history
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run the eval suite
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: evals/run.sh | tee eval-output.txt
+
+      - name: Publish the result
+        if: always()
+        run: |
+          {
+            echo '## Agent eval suite'
+            echo '```'
+            tail -40 eval-output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-output
+          path: eval-output.txt
+
+# The job failing is the gate: a configuration change that drops the pass rate does not merge until
+# someone has looked at it. Do not add `continue-on-error` — a gate that cannot turn the build red is
+# a dashboard.

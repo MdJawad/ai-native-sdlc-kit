@@ -1,0 +1,11 @@
+{
+  "id": "artifact-chain",
+  "description": "An idea is captured as an intent.md in the right place and shape — and the session stops there rather than running ahead into design.",
+  "prompt": "Users keep asking support where their order is. Capture this as an intent.",
+  "allowed_tools": "Read,Write,Glob,Grep",
+  "checks": [
+    { "type": "command", "run": "ls sdlc/*/intent.md >/dev/null 2>&1" },
+    { "type": "command_fails", "run": "ls sdlc/*/spec.md >/dev/null 2>&1" },
+    { "type": "output_contains", "pattern": "(product owner|accept|approv)" }
+  ]
+}

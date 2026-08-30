@@ -1,0 +1,86 @@
+# What the installer copies, and where.
+#
+# modes:
+#   tree              recursively copy a directory; per-file conflict handling
+#   copy              copy one file; if the destination exists and differs, write <dest>.sdlc-ai-new
+#   create-if-absent  copy one file only when the destination does not exist
+#   block             merge a marker-delimited block into a markdown file, replacing it if present
+#   json              deep-merge a JSON fragment into the destination
+#   exec              copy and chmod +x
+#
+# profile: any | trunk-local | pr-github
+version: "0.1.0"
+
+modules:
+
+  claude-md:
+    description: "CLAUDE.md scaffold, plus the verification and artifacts blocks"
+    entries:
+      - { src: claude-md/CLAUDE.md.template, dest: CLAUDE.md,         mode: create-if-absent, profile: any }
+      - { src: claude-md/blocks/verification.md, dest: CLAUDE.md,     mode: block,            profile: any }
+      - { src: claude-md/blocks/artifacts.md,    dest: CLAUDE.md,     mode: block,            profile: any }
+
+  skills:
+    description: "The six skills — Stages 1, 2, 3 and 4b"
+    entries:
+      - { src: claude/skills, dest: .claude/skills, mode: tree, profile: any }
+
+  agents:
+    description: "verifier, reviewer, spec-critic subagents"
+    entries:
+      - { src: claude/agents, dest: .claude/agents, mode: tree, profile: any }
+
+  commands:
+    description: "/intent /spec /plan /review /close-loop"
+    entries:
+      - { src: claude/commands, dest: .claude/commands, mode: tree, profile: any }
+
+  hooks:
+    description: "The deterministic guards, plus their settings.json registration"
+    entries:
+      - { src: claude/hooks/_sdlc_lib.sh,         dest: .claude/hooks/_sdlc_lib.sh,         mode: exec, profile: any }
+      - { src: claude/hooks/protect-tests.sh,     dest: .claude/hooks/protect-tests.sh,     mode: exec, profile: any }
+      - { src: claude/hooks/protect-paths.sh,     dest: .claude/hooks/protect-paths.sh,     mode: exec, profile: any }
+      - { src: claude/hooks/format-after-edit.sh, dest: .claude/hooks/format-after-edit.sh, mode: exec, profile: any }
+      - { src: claude/settings.d/base.json,       dest: .claude/settings.json,              mode: json, profile: any }
+      - { src: claude/hooks/no-remote-push.sh,    dest: .claude/hooks/no-remote-push.sh,    mode: exec, profile: trunk-local }
+      - { src: claude/settings.d/profile-trunk-local.json, dest: .claude/settings.json,     mode: json, profile: trunk-local }
+      - { src: claude/hooks/production-gate.sh,   dest: .claude/hooks/production-gate.sh,   mode: exec, profile: pr-github }
+      - { src: claude/settings.d/profile-pr-github.json,   dest: .claude/settings.json,     mode: json, profile: pr-github }
+
+  artifacts:
+    description: "The intent → spec → plan chain and its templates"
+    entries:
+      - { src: artifacts/README.md,    dest: sdlc/README.md,    mode: copy, profile: any }
+      - { src: artifacts/templates,    dest: sdlc/templates,    mode: tree, profile: any }
+
+  review:
+    description: "REVIEW.md — the review policy"
+    entries:
+      - { src: review/REVIEW.md, dest: REVIEW.md, mode: copy, profile: any }
+
+  evals:
+    description: "Stage 4b — agent-configuration eval harness"
+    entries:
+      - { src: evals/README.md, dest: evals/README.md, mode: copy, profile: any }
+      - { src: evals/run.sh,    dest: evals/run.sh,    mode: exec, profile: any }
+      - { src: evals/check.sh,  dest: evals/check.sh,  mode: exec, profile: any }
+      - { src: evals/cases,     dest: evals/cases,     mode: tree, profile: any }
+
+  ci:
+    description: "CI wiring — profile-dependent"
+    entries:
+      - { src: ci/github/agent-evals.yml,   dest: .github/workflows/agent-evals.yml,   mode: copy, profile: any }
+      - { src: ci/github/claude-review.yml, dest: .github/workflows/claude-review.yml, mode: copy, profile: pr-github }
+      - { src: ci/local/pre-merge-gate.sh,  dest: ci/local/pre-merge-gate.sh,          mode: exec, profile: trunk-local }
+
+  maintain:
+    description: "Stage 6 — control bands and the detection script"
+    entries:
+      - { src: maintain/bands.yaml.template, dest: .sdlc-ai/bands.yaml,          mode: create-if-absent, profile: any }
+      - { src: maintain/watch-band.sh,       dest: scripts/sdlc/watch-band.sh,    mode: exec,             profile: any }
+
+# Deliberately not a module. Enterprise controls are deployed by IT through MDM, not installed into a
+# repository — see kit/enterprise/README.md.
+not_installed:
+  - enterprise/managed-settings.json

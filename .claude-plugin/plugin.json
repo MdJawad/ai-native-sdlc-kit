@@ -1,0 +1,31 @@
+{
+  "name": "sdlc-ai",
+  "version": "0.1.0",
+  "description": "The AI-native SDLC kit — skills, subagents and commands for the intent → spec → plan artifact chain, policy-conformant design, plan-before-code, and closing the loop from production back to intent.",
+  "author": {
+    "name": "Mohamed Jawad Askar"
+  },
+  "homepage": "https://github.com/",
+  "license": "Apache-2.0",
+  "keywords": ["sdlc", "governance", "process", "artifacts", "review", "evals"],
+  "skills": [
+    "./kit/claude/skills/intent-capture",
+    "./kit/claude/skills/spec-authoring",
+    "./kit/claude/skills/implementation-plan",
+    "./kit/claude/skills/adr-authoring",
+    "./kit/claude/skills/eval-authoring",
+    "./kit/claude/skills/secure-api-review"
+  ],
+  "agents": [
+    "./kit/claude/agents/verifier.md",
+    "./kit/claude/agents/reviewer.md",
+    "./kit/claude/agents/spec-critic.md"
+  ],
+  "commands": [
+    "./kit/claude/commands/intent.md",
+    "./kit/claude/commands/spec.md",
+    "./kit/claude/commands/plan.md",
+    "./kit/claude/commands/review.md",
+    "./kit/claude/commands/close-loop.md"
+  ]
+}

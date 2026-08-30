@@ -1,0 +1,23 @@
+{
+  "name": "sdlc-ai",
+  "id": "sdlc-ai",
+  "owner": {
+    "name": "Mohamed Jawad Askar"
+  },
+  "metadata": {
+    "description": "The AI-native SDLC kit — an independent implementation of the AI-Native SDLC Playbook as installable configuration",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "sdlc-ai",
+      "source": "./",
+      "description": "Skills, subagents and commands for the AI-native SDLC: intent → spec → plan, policy-conformant design, plan-before-code, and closing the loop from production back to intent. Hooks, CI and artifact templates are installed per-repo by install/install.sh.",
+      "version": "0.1.0",
+      "author": { "name": "Mohamed Jawad Askar" },
+      "license": "Apache-2.0",
+      "keywords": ["sdlc", "governance", "process", "artifacts", "review", "evals"],
+      "category": "workflow"
+    }
+  ]
+}

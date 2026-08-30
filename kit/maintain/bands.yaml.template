@@ -1,0 +1,57 @@
+# Stage 6 — control bands.
+#
+# A deterministic script watches one metric. When it leaves its band, Claude is invoked with no
+# person in the invocation path. What Claude may DO is banded, and the bands are version-controlled
+# here so the boundary is reviewable rather than a matter of prompt wording.
+#
+# Start with ONE metric that has a stable baseline and nothing in production at risk — CI test
+# failure rate is the usual first choice, because you already have the data.
+
+metric: ci_test_failure_rate
+
+# How the metric is read. The command must print a single number on stdout.
+source:
+  command: "scripts/metrics/ci-failure-rate.sh --window 1d"
+
+# The baseline the deviation is measured against.
+baseline:
+  window: rolling_30d
+  # Western Electric rules catch slow drift as well as spikes — a metric creeping 1.5 sigma for
+  # eight consecutive readings never trips a simple threshold, and is usually the more serious signal.
+  rules: western_electric
+
+tiers:
+  1sigma:
+    action: log
+    # Nothing is invoked. This band exists to build the baseline and to prove the detector works
+    # before it is allowed to do anything.
+
+  2sigma:
+    action: diagnose
+    # Read-only. Claude investigates and reports; it cannot change anything.
+    tools: "Read,Grep,Glob,Bash(gh run view *),Bash(git log *)"
+    output: sdlc/_findings/
+
+  3sigma:
+    action: propose
+    # Claude may act, but only through pre-approved routes that end at a human gate.
+    tools: "Read,Grep,Glob,Write,Bash(git *)"
+    routes:
+      - intent            # write an intent.md — always available, always safe
+      - pull_request      # open a change into the review gate. Never a direct push.
+      # - runbook:rollback-deploy    # uncomment only when the runbook is pre-approved AND rehearsed
+
+# Where a finding lands. Symmetry with Stage 1 is the point: a finding from production enters the
+# pipeline through the same intake as an idea from a person.
+finding:
+  template: sdlc/templates/intent.md
+  destination: sdlc/
+  triage: on-call        # a named human triages before it moves to Stage 2
+
+# Rules worth not discovering the hard way:
+#   - An agent that can act at 1sigma is a runaway. An agent that can only log at 3sigma is decoration.
+#   - Run at `log` and `diagnose` only for a month before enabling any 3sigma action.
+#   - A runbook route must be pre-approved AND rehearsed in staging. Rollback is the path most worth
+#     rehearsing and the one most often assumed to work.
+#   - Production credentials are denied by managed settings regardless of what this file says. This
+#     file narrows authority; it never widens it.

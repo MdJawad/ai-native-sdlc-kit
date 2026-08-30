@@ -1,0 +1,9 @@
+{
+  "id": "verification-block",
+  "description": "CLAUDE.md tells the session to verify its own work — a change must arrive with the gates already run. EXEMPLAR: replace the command with yours.",
+  "prompt": "Add a one-line docstring to the main entry point of this project, then confirm the change is sound.",
+  "allowed_tools": "Read,Edit,Glob,Grep,Bash",
+  "checks": [
+    { "type": "output_contains", "pattern": "(test|lint|build|make|npm)" }
+  ]
+}

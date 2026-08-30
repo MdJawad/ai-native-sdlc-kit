@@ -1,0 +1,49 @@
+# Stage 5 (pr-github profile) — Claude reviews the pull request against REVIEW.md.
+#
+# The review is advice for a human, never an approval. Branch protection and code-owner approval
+# remain the gate; this job cannot approve, merge, or push.
+name: claude review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]          # lets a reviewer address findings by tagging the agent
+
+permissions:
+  contents: read
+  pull-requests: write        # comment only — deliberately not `write` on contents
+
+jobs:
+  review:
+    # Skip drafts, and only wake on a comment that actually tags the agent.
+    if: >
+      (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Review against REVIEW.md
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review this pull request.
+
+            Read REVIEW.md at the repo root — it is the policy and it overrides your defaults.
+            Read sdlc/<slug>/plan.md and spec.md if the change has them; the compliance pass
+            compares the diff against what was agreed.
+
+            Run three passes and tag every finding with its pass: Bugs, Security, Compliance.
+            Reserve "Important" for findings that break behaviour, leak data or breach a stated
+            policy. Cap nits at five and summarise the rest as a count.
+
+            Do not report anything CI already enforces. Do not report generated or vendored files.
+            If you found nothing Important, say so — that is a complete review.
+
+# Separation of duties: this job has no `contents: write`, so it cannot push a fix, and its identity
+# cannot satisfy branch protection. A human approves. See docs/03-governance.md.

@@ -1,0 +1,75 @@
+# <Repo name>
+
+<One or two sentences: what this repository is, and what it is not. A reader who knows nothing
+should be able to tell whether they are in the right place.>
+
+## Commands
+
+<Every command a session needs, with what healthy output looks like. This section is why the
+agent can verify its own work.>
+
+- Build: `<command>` (succeeds with "<expected output>")
+- Test: `<command>` (all green)
+- Lint: `<command>` (zero warnings)
+- Run: `<command>`
+
+## Conventions
+
+<The decisions that are not up for debate, stated as rules. Five to ten lines. Language version,
+the type used for money, the pattern every endpoint follows, what always needs a test.>
+
+## Architecture
+
+<Where things live and what may depend on what. Three to six lines — the directory map plus the
+one boundary rule people break.>
+
+## Source of truth
+
+<Which document answers which question. More useful than a prose architecture section, because it
+is what stops a session confidently reading a planning document the code overtook two months ago.
+State plainly which documents are *authoritative* and which are merely still true.>
+
+| Question | Document |
+|---|---|
+| How do I run and verify the whole thing? | |
+| What is authoritative when two documents disagree? | |
+| What is being built next, and why? | |
+
+## Things Claude gets wrong
+
+<Empty at first, and the most valuable section within a month. The rule: when Claude makes the
+same mistake twice, the correction goes here. Once is noise.>
+
+## Verifying your work
+
+<!-- sdlc-ai:begin verification -->
+<!-- Managed by sdlc-ai. Edit the commands; keep the markers. -->
+
+- Build: `<build command>` (must finish with "<expected output>")
+- Test: `<test command>` (all green — never skip or delete a failing test)
+- Lint: `<lint command>` (zero warnings)
+
+Run all three before reporting any task complete, and paste the output.
+**If a test fails, fix the code, not the test.**
+
+<!-- sdlc-ai:end verification -->
+
+## The SDLC artifacts
+
+<!-- sdlc-ai:begin artifacts -->
+<!-- Managed by sdlc-ai. -->
+
+Work in this repo carries a committed artifact chain in `sdlc/<slug>/`:
+
+| Stage | Artifact | Command |
+|---|---|---|
+| 1 Plan | `intent.md` — why | `/intent` |
+| 2 Design | `spec.md` — what, policy-conformant | `/spec <slug>` |
+| 3 Build | `plan.md` — how, reviewed before code | `/plan <slug>` |
+| 5 Deploy | review findings | `/review` |
+| 6 Maintain | a new `intent.md` | `/close-loop` |
+
+Read `sdlc/README.md` for the rules. Commit each artifact separately from the code — bundling them
+destroys both the metric and the evidence that thinking happened first.
+
+<!-- sdlc-ai:end artifacts -->
