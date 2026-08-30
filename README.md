@@ -42,7 +42,7 @@ intent.md   spec.md      plan.md    green      review        breach
 ## Install
 
 ```bash
-git clone <this repo> && cd sdlc-ai
+git clone <this repo> && cd ai-native-sdlc-kit
 
 # See exactly what would happen. Writes nothing.
 install/install.sh --target /path/to/your/repo --profile trunk-local --dry-run

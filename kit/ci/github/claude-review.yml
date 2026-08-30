@@ -16,10 +16,14 @@ permissions:
 
 jobs:
   review:
-    # Skip drafts, and only wake on a comment that actually tags the agent.
+    # Skip drafts. On a comment, wake only for someone who can already write to the repo: on a public
+    # repo this job holds your API key and reads attacker-controlled text, so anyone who can comment
+    # would otherwise be able to spend it and steer the prompt.
     if: >
       (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude'))
+      (github.event_name == 'issue_comment' &&
+      contains(github.event.comment.body, '@claude') &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
